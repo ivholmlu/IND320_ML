@@ -1,3 +1,6 @@
+from barentswatch.credentials import config
+import requests
+
 def get_aquastites(config, token):
     """ Get data from the aquastites using /v1/geodata/fishhealth/localitie
 
@@ -53,3 +56,14 @@ def get_year_data_localities(config, token, year, weeks):
 
         df_total = df_total.append(df_extended, ignore_index=True);
     return df_total
+
+def get_week_summary(token, year, week):
+    url = f"{config['api_base_url']}/v1/geodata/fishhealth/locality/{year}/{week}"
+    headers ={
+    'authorization': 'Bearer ' + token['access_token'],
+    'content-type': 'application/json',
+    }
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
