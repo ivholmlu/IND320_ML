@@ -26,6 +26,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 barentswatch
+frost_credentials
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
