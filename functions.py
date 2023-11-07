@@ -67,3 +67,14 @@ def get_week_summary(token, year, week):
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response.json()
+
+def get_detailed_week_summary(token, year, week, locality_id):
+    url = f"{config['api_base_url']}/v1/geodata/fishhealth/{locality_id}/{year}/{week}"
+    headers ={
+    'authorization': 'Bearer ' + token['access_token'],
+    'content-type': 'application/json',
+    }
+
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
