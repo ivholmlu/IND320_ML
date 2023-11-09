@@ -7,6 +7,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+barentswatch/
+frost_credentials/
 .Python
 build/
 develop-eggs/
@@ -25,8 +27,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
-barentswatch
-frost_credentials
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
