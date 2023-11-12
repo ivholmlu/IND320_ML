@@ -1,6 +1,8 @@
 cassandra-driver
 pandas
 warnings
-pprintpp
 matplotlib
 seaborn
+ipywidgets
+requests
+statsmodels
