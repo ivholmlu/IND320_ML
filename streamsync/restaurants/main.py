@@ -1,11 +1,7 @@
 import streamsync as ss
 import pandas as pd
 import plotly.express as px
-#from functions import get_weekly_summary
 
-# Its name starts with _, so this function won't be exposed
-
-# Import data
 def _get_main_df():
     main_df = pd.read_csv('../../data/localities.csv')
     return main_df
@@ -14,6 +10,15 @@ def _get_localities_year(state):
     localities_df = state["localities_df"]
     return localities
 
+def _update_plotly_pd(state):
+    df = state["click_df"]
+    name = df['name'].values[0]
+    pie_data = df['haspd'].value_counts().reset_index()
+    pie_data.columns = ['haspd', 'count']
+    fig_pd = px.pie(pie_data, names="haspd", values='count', title=f'Pie chart of hasPd for {name}')
+    state["plotly_pd"] = fig_pd
+    print(fig_pd)
+
 # Plot restaurants
 def _update_plotly_localities(state):
     localities = state["localities_df"]
@@ -21,30 +26,31 @@ def _update_plotly_localities(state):
     sizes = [10]*len(localities)
     if selected_num != -1:
         sizes[selected_num] = 20
-    fig_restaurants = px.scatter_mapbox(
+    fig_localities = px.scatter_mapbox(
         localities,
         lat="lat",
         lon="lon",
         hover_name="name",
         hover_data=["lat","lon"],
         color_discrete_sequence=["darkgreen"],
-        zoom=3,
+        zoom=5,
         height=600,
         width=700,
     )
-    overlay = fig_restaurants['data'][0]
+    overlay = fig_localities['data'][0]
     overlay['marker']['size'] = sizes
-    fig_restaurants.update_layout(mapbox_style="open-street-map")
-    fig_restaurants.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-    state["plotly_localities"] = fig_restaurants
+    fig_localities.update_layout(mapbox_style="open-street-map")
+    fig_localities.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    state["plotly_localities"] = fig_localities
 
 def handle_click(state, payload):
-    restaurants = state["restaurants_df"]
-    state["selected"] = restaurants["name"].values[payload[0]["pointNumber"]]
-    state["selected_num"] = payload[0]["pointNumber"]
-    _update_plotly_restaurants(state)
-
-
+    localities = state["localities_df"]
+    num = payload[0]["pointNumber"]
+    locality_no = localities.loc[num, 'localityno']
+    df = localities[localities['localityno'] == locality_no]
+    state["click_df"] = df
+    state["histo_columns"] = df.select_dtypes(include=['int', 'float']).columns
+    _update_plotly_pd(state)
 
 # Initialise the state
 
@@ -63,4 +69,3 @@ initial_state = ss.init_state({
 })
 
 _update_plotly_localities(initial_state)
-
