@@ -1,4 +1,5 @@
 from cassandra.cluster import Cluster
+import os
 
 def reset_table(session, keyspace, table_name):
     reset_query = f"DROP TABLE IF EXISTS {keyspace}.{table_name};"
@@ -7,49 +8,51 @@ def reset_table(session, keyspace, table_name):
 def create_locality_table(session):
 
     session.set_keyspace('fish_data')
-    table_creation_query = """
-        CREATE TABLE IF NOT EXISTS locality_data (
-            year INT,
-            week INT,
-            localityNo INT,
-            localityWeekId INT PRIMARY KEY,
-            name TEXT,
-            hasReportedLice BOOLEAN,
-            isFallow BOOLEAN,
-            avgAdultFemaleLice DOUBLE,
-            hasCleanerfishDeployed BOOLEAN,
-            hasMechanicalRemoval BOOLEAN,
-            hasSubstanceTreatments BOOLEAN,
-            hasPd BOOLEAN,
-            hasIla BOOLEAN,
-            municipalityNo TEXT,
-            municipality TEXT,
-            lat DOUBLE,
-            lon DOUBLE,
-            isOnLand BOOLEAN,
-            inFilteredSelection BOOLEAN,
-            hasSalmonoids BOOLEAN,
-            isSlaughterHoldingCage BOOLEAN
-        );
-    """
+    table_creation_query = """CREATE TABLE IF NOT EXISTS locality_data (
+    year INT,
+    week INT,
+    localityno INT,
+    name TEXT,
+    hasreportedlice BOOLEAN,
+    isfallow BOOLEAN,
+    avgadultfemalelice DOUBLE,
+    hascleanerfishdeployed BOOLEAN,
+    hasmechanicalremoval BOOLEAN,
+    hassubstancetreatments BOOLEAN,
+    haspd BOOLEAN,
+    hasila BOOLEAN,
+    municipalityno TEXT,
+    municipality TEXT,
+    lat DOUBLE,
+    lon DOUBLE,
+    isonland BOOLEAN,
+    infilteredselection BOOLEAN,
+    hassalmonoids BOOLEAN,
+    isslaughterholdingcage BOOLEAN,
+    PRIMARY KEY (year, week, localityno)
+);"""
+
     session.execute(table_creation_query)
 
-def create_localities_table(session):
 
-    session.execute("DROP TABLE locality_{locality_id}")
-    table_creation_query = """
-        CREATE TABLE locality_{locality_id} (
-            datetime TEXT PRIMARY KEY,
-            avgAdultFemaleLice FLOAT,
-            hasReportedLice BOOLEAN,
-            avgMobileLice FLOAT,
-            avgStationaryLice FLOAT,
-            seaTemperature FLOAT,
-        )
-        """
+def create_localities_table(session, locality_id, keyspace="fish_data"):
+    session.set_keyspace(keyspace)
+    session.execute(f"DROP TABLE IF EXISTS locality_{locality_id}")
+    table_creation_query = f"""CREATE TABLE locality_{locality_id} (
+    year INT,
+    week INT,
+    localityno INT,
+    avgadultfemalelice FLOAT,
+    hasreportedlice BOOLEAN,
+    avgmobilelice FLOAT,
+    avgstationarylice FLOAT,
+    seatemperature FLOAT,
+    localityname TEXT,
+    PRIMARY KEY (year, week, localityno)
+);"""
     session.execute(table_creation_query)
 
-def check_table_exist(session, keyspace):
+def check_table_exist(session, keyspace, table_to_check):
     session.set_keyspace('{keyspace}')
     tables = session.execute("SELECT table_name FROM system_schema.tables WHERE keyspace_name = %s", [keyspace])
     table_names = [row.table_name for row in tables]
@@ -72,5 +75,11 @@ def initiate_cassandra_driver(p=9042):
     session = cluster.connect() 
     return session
 
-def initiate_spark():
-    pass
+def check_year(session, keyspace, table_name, year):
+    query = f"SELECT * FROM {keyspace}.{table_name} WHERE year = {year} ALLOW FILTERING"
+    rows = session.execute(query)
+    if rows:
+        return True
+    else:
+        return False
+    

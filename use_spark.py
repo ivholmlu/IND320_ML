@@ -21,3 +21,12 @@ def initiate_spark():
     warnings.simplefilter(action='default', category=FutureWarning)
     
     return spark
+
+
+def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
+    df.write\
+        .format("org.apache.spark.sql.cassandra")\
+        .mode('append')\
+        .options(table=f"locality_{locality_id}", keyspace=keyspace)\
+        .save()
+    
