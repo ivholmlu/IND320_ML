@@ -1,6 +1,10 @@
 import requests
 import pandas as pd
 from credentials import config_frost
+from credentials import config
+from authentication import get_token
+
+
 def api_weather_station_id(id, year):
     """Returns yearly data for weather id station"""
 
@@ -50,3 +54,18 @@ def get_week_summary(token, year, week):
   response = requests.get(url, headers=headers)
   response.raise_for_status()
   return response.json()
+
+
+def localities_api(year):
+    token = get_token()
+    list_localitites = []
+    df_total = pd.DataFrame()
+    for week in range(1, 53):
+        locality_data = get_week_summary(token, year, week)
+        for row in locality_data["localities"]:
+            row["year"] = locality_data["year"]
+            row["week"] = locality_data["week"]
+            list_localitites.append(row)
+    df_localities_year = pd.DataFrame(list_localitites)
+    df_localities_year.columns = df_localities_year.columns.str.lower()
+    return df_localities_year

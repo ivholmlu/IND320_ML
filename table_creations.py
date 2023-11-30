@@ -1,17 +1,26 @@
 from cassandra.cluster import Cluster
 import os
 
+def _initiate_cassandra_driver(p=9042):
+    print("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC")
+    cluster = Cluster(['localhost'], port=p)
+    session = cluster.connect()
+    return session
+
 def reset_table(session, keyspace, table_name):
+    session = _initiate_cassandra_driver()
     reset_query = f"DROP TABLE IF EXISTS {keyspace}.{table_name};"
     session.execute(reset_query)
 
-def create_locality_table(session):
-
+def create_locality_table(session=1):
+    session = _initiate_cassandra_driver()
     session.set_keyspace('fish_data')
+    session.execute(f"DROP TABLE IF EXISTS locality_data")
     table_creation_query = """CREATE TABLE IF NOT EXISTS locality_data (
     year INT,
     week INT,
     localityno INT,
+    localityweekid INT,
     name TEXT,
     hasreportedlice BOOLEAN,
     isfallow BOOLEAN,
@@ -34,7 +43,6 @@ def create_locality_table(session):
 
     session.execute(table_creation_query)
 
-
 def create_localities_table(session, locality_id, keyspace="fish_data"):
     session.set_keyspace(keyspace)
     session.execute(f"DROP TABLE IF EXISTS locality_{locality_id}")
@@ -48,6 +56,8 @@ def create_localities_table(session, locality_id, keyspace="fish_data"):
     avgstationarylice FLOAT,
     seatemperature FLOAT,
     localityname TEXT,
+    lat FLOAT,
+    lon FLOAT,
     PRIMARY KEY (year, week, localityno)
 );"""
     session.execute(table_creation_query)
@@ -83,3 +93,12 @@ def check_year(session, keyspace, table_name, year):
     else:
         return False
     
+def get_lat_lon(session, locality_id):
+    session.set_keyspace('fish_data')
+    query = f"SELECT lat, lon FROM locality_data WHERE year = 2022 AND week = 1 AND localityno = {locality_id}"
+    result = session.execute(query)
+    
+    for row in result:
+        lat = row.lat
+        lon = row.lon
+    return lat, lon

@@ -3,8 +3,8 @@ import os
 from pyspark.sql import SparkSession
 import warnings
 
-def initiate_spark():
-    
+def _initiate_spark(port='9042'):
+    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
     warnings.simplefilter(action='ignore', category=FutureWarning)
     from pyspark.sql import SparkSession
     os.environ["PYSPARK_PYTHON"] = r"/home/ivholmlu/miniconda3/envs/ind320/bin/python" 
@@ -15,18 +15,31 @@ def initiate_spark():
         config('spark.sql.extensions', 'com.datastax.spark.connector.CassandraSparkExtensions').\
         config('spark.sql.catalog.mycatalog', 'com.datastax.spark.connector.datasource.CassandraCatalog').\
         config("spark.cassandra.output.batch.size.rows", "1000").\
-        config('spark.cassandra.connection.port', '9042').getOrCreate()
+        config('spark.cassandra.connection.port', port).getOrCreate()
     
     
     warnings.simplefilter(action='default', category=FutureWarning)
     
     return spark
 
-
 def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
-    df.write\
+    #insert/append into existing table for single instance of locality data
+    spark = _initiate_spark()
+    spark_df = spark.createDataFrame(df)
+    spark_df.write\
         .format("org.apache.spark.sql.cassandra")\
         .mode('append')\
         .options(table=f"locality_{locality_id}", keyspace=keyspace)\
         .save()
-    
+    spark.stop()
+
+def insert_localities_year(df, keyspace="fish_data"):
+    #insert/append into existing table for a yearly instance of data from all localitites.
+    spark = _initiate_spark()
+    spark_df = spark.createDataFrame(df)
+    spark_df.write\
+        .format("org.apache.spark.sql.cassandra")\
+        .mode('append')\
+        .options(table=f"locality_data", keyspace=keyspace)\
+        .save()
+    spark.stop()
