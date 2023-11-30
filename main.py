@@ -8,6 +8,7 @@ from pyspark.sql import SparkSession
 from api_creations import *
 
 def _update_plotly_pd(state):
+
     df = state["click_df"]
     name = df['name'].values[0]
     pie_data = df['haspd'].value_counts().reset_index()
@@ -17,8 +18,8 @@ def _update_plotly_pd(state):
     state["test"] = "pd"
     
 def _update_plotly_histogram(state):
+
     df = state["click_df"]
-    print(df["avgadultfemalelice"].values)
     name = df['name'].values[0]
     fig_hist = px.line(df, x="week", y="avgadultfemalelice", title=f'histogram of avgadultfemalelice for {name}')
     state["plotly_hist"] = fig_hist
@@ -35,7 +36,7 @@ def _update_plotly_localities(state):
         lat="lat",
         lon="lon",
         hover_name="name",
-        hover_data=["lat","lon","localityno"],
+        hover_data=["lat","lon"],
         color_discrete_sequence=["darkgreen"],
         zoom=5,
         height=600,
@@ -48,43 +49,40 @@ def _update_plotly_localities(state):
     state["plotly_localities"] = fig_localities
 
 def handle_click(state, payload):
+
     localities = state["localities_df"]
+    
     full_df = state["full_df"]
     num = payload[0]["pointNumber"] #index of clicked point
     locality_no = localities.loc[num, 'localityno']
     state["localityno"] = locality_no
     df = full_df[full_df['localityno'] == locality_no]
+    
     state["click_df"] = df
     state["click_dfshape"] = f"{df.shape}"
 
     _update_plotly_pd(state)
     _update_plotly_histogram(state)
 
-
-    
-def _update_year(state):
-    df = localities_api(state["current_year"])
+def get_localities(state, year):
+    df = localities_api(year) # TODO Add IF test to check if table exists
     state["full_df"] = df 
     state["full_dfshape"] = f"{df.shape}"
     unique_df =  df.drop_duplicates(subset=['localityno', 'lat', 'lon', 'year', 'name'], inplace=False) #Values needed in map plot
     state["localities_df"] = unique_df
     state["localities_dfshape"] = f"{unique_df.shape}"
-    _update_plotly_localities(state)
-
+    
 def handle_select(state, payload):
+    print(payload)
+    print(payload["value"])
     state["current_year"] = payload["value"]
-__  update_year(state)
-
+    print(state["current_year"])
+    get_localities(state, payload["value"])
+    
 def _get_init_dataframe(state):
     create_locality_table()
-    df = localities_api(2022)
-    state["full_df"] = df 
-    state["full_dfshape"] = f"{df.shape}"
-    unique_df =  df.drop_duplicates(subset=['localityno', 'lat', 'lon', 'year', 'name'], inplace=False) #Values needed in map plot
-    state["localities_df"] = unique_df
-    state["localities_dfshape"] = f"{unique_df.shape}"
+    get_localities(state, 2022) # TODO Add IF test to check if table exists
     insert_localities_year(state["localities_df"])
-
 
 initial_state = ss.init_state({
     "my_app": {

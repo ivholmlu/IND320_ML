@@ -23,7 +23,9 @@
             },
             "parentId": "root",
             "position": 0,
-            "handlers": {},
+            "handlers": {
+                "ss-keydown": "handle_select"
+            },
             "visible": true
         },
         "bebc5fe9-63a7-46a7-b0fa-62303555cfaf": {
@@ -66,9 +68,9 @@
             "id": "yuha3wu1wktejq4s",
             "type": "sliderinput",
             "content": {
-                "label": "Year",
+                "label": "Slide to choose year",
                 "minValue": "2018",
-                "maxValue": "2022",
+                "maxValue": "2020",
                 "stepSize": "1"
             },
             "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
