@@ -42,7 +42,7 @@
             "id": "bo9afnjudbduu362",
             "type": "plotlygraph",
             "content": {
-                "spec": "@{_update_plotly_localities}"
+                "spec": "@{plotly_localities}"
             },
             "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
             "position": 3,
@@ -68,7 +68,7 @@
             "content": {
                 "label": "Year",
                 "minValue": "2018",
-                "maxValue": "2020",
+                "maxValue": "2022",
                 "stepSize": "1"
             },
             "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
@@ -78,6 +78,28 @@
                 "eventType": "ss-number-change",
                 "stateRef": "current_year"
             },
+            "visible": true
+        },
+        "bv3r4n6ift88q3nc": {
+            "id": "bv3r4n6ift88q3nc",
+            "type": "plotlygraph",
+            "content": {
+                "spec": "@{plotly_pd}"
+            },
+            "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
+            "position": 4,
+            "handlers": {},
+            "visible": true
+        },
+        "wjl51qq6aoupkgiu": {
+            "id": "wjl51qq6aoupkgiu",
+            "type": "plotlygraph",
+            "content": {
+                "spec": "@{plotly_hist}"
+            },
+            "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
+            "position": 5,
+            "handlers": {},
             "visible": true
         }
     }
