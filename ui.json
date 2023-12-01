@@ -69,13 +69,15 @@
             "type": "sliderinput",
             "content": {
                 "label": "Slide to choose year",
-                "minValue": "2018",
-                "maxValue": "2020",
+                "minValue": "2015",
+                "maxValue": "2022",
                 "stepSize": "1"
             },
             "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
             "position": 2,
-            "handlers": {},
+            "handlers": {
+                "ss-number-change": "handle_select"
+            },
             "binding": {
                 "eventType": "ss-number-change",
                 "stateRef": "current_year"
@@ -90,7 +92,6 @@
             },
             "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
             "position": 4,
-            "handlers": {},
             "visible": true
         },
         "wjl51qq6aoupkgiu": {
