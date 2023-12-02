@@ -19,10 +19,11 @@
             "type": "page",
             "content": {
                 "pageMode": "compact",
-                "emptinessColor": "#e9eef1"
+                "containerBackgroundColor": "#ffda62",
+                "key": "First page"
             },
             "parentId": "root",
-            "position": 0,
+            "position": 1,
             "handlers": {
                 "ss-keydown": "handle_select"
             },
@@ -53,7 +54,7 @@
             "parentId": "k388ookn2bsh79l3",
             "position": 0,
             "handlers": {
-                "ss-number-change": "handle_select"
+                "ss-number-change": "handle_slider"
             },
             "binding": {
                 "eventType": "ss-number-change",
@@ -67,7 +68,7 @@
             "content": {
                 "spec": "@{plotly_pd}"
             },
-            "parentId": "385kiwbh0p0l4okv",
+            "parentId": "xkcg3pn3qwn8z31y",
             "position": 1,
             "visible": true
         },
@@ -77,7 +78,7 @@
             "content": {
                 "spec": "@{plotly_line}"
             },
-            "parentId": "385kiwbh0p0l4okv",
+            "parentId": "xkcg3pn3qwn8z31y",
             "position": 0,
             "handlers": {},
             "visible": true
@@ -86,7 +87,8 @@
             "id": "zqxn3bmgzjn8v782",
             "type": "dropdowninput",
             "content": {
-                "label": "Choose attribute for line plot"
+                "label": "Choose attribute for line plot",
+                "options": "@{localities_JSON}"
             },
             "parentId": "o9yvm18oelir5pul",
             "position": 0,
@@ -95,17 +97,8 @@
             },
             "binding": {
                 "eventType": "ss-option-change",
-                "stateRef": "my_JSON"
+                "stateRef": "chosen_column"
             },
-            "visible": true
-        },
-        "3a8tj5rt411xpgbg": {
-            "id": "3a8tj5rt411xpgbg",
-            "type": "separator",
-            "content": {},
-            "parentId": "c0f99a9e-5004-4e75-a6c6-36f17490b134",
-            "position": 3,
-            "handlers": {},
             "visible": true
         },
         "u4s04a7rwdnelcpn": {
@@ -113,7 +106,9 @@
             "type": "section",
             "content": {
                 "title": "Map of localitites",
-                "snapMode": "no"
+                "snapMode": "no",
+                "accentColor": "#29cf00",
+                "containerBackgroundColor": "#29cf00"
             },
             "parentId": "z35vf0ueqm56w2g4",
             "position": 0,
@@ -133,7 +128,8 @@
             "id": "z35vf0ueqm56w2g4",
             "type": "column",
             "content": {
-                "width": "1"
+                "width": "1",
+                "title": ""
             },
             "parentId": "k6ur6xedqmvsjwy7",
             "position": 0,
@@ -193,6 +189,117 @@
             "position": 0,
             "handlers": {},
             "visible": true
+        },
+        "riysvvo8ihf2xm57": {
+            "id": "riysvvo8ihf2xm57",
+            "type": "page",
+            "content": {},
+            "parentId": "root",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "xkcg3pn3qwn8z31y": {
+            "id": "xkcg3pn3qwn8z31y",
+            "type": "section",
+            "content": {
+                "title": "Information about selected locality",
+                "containerBackgroundColor": "#29cf00",
+                "snapMode": "no"
+            },
+            "parentId": "385kiwbh0p0l4okv",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "745k10uhm4ciylc6": {
+            "id": "745k10uhm4ciylc6",
+            "type": "image",
+            "content": {
+                "src": "https://media.tenor.com/yiqrYjlbMawAAAAi/colour-color-picker.gif",
+                "caption": "Loading data for year"
+            },
+            "parentId": "z35vf0ueqm56w2g4",
+            "position": 1,
+            "handlers": {},
+            "visible": "running_wheel"
+        },
+        "64bapfddvazwn3bo": {
+            "id": "64bapfddvazwn3bo",
+            "type": "plotlygraph",
+            "content": {
+                "spec": "@{plotly_line}"
+            },
+            "parentId": "lt77f3weywhy61q7",
+            "position": 1,
+            "handlers": {},
+            "visible": true
+        },
+        "e656uecxdk3k4gem": {
+            "id": "e656uecxdk3k4gem",
+            "type": "header",
+            "content": {
+                "text": "Weather and Arimax"
+            },
+            "parentId": "riysvvo8ihf2xm57",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "l3cnfilj4cdidwor": {
+            "id": "l3cnfilj4cdidwor",
+            "type": "columns",
+            "content": {},
+            "parentId": "riysvvo8ihf2xm57",
+            "position": 1,
+            "handlers": {},
+            "visible": true
+        },
+        "lt77f3weywhy61q7": {
+            "id": "lt77f3weywhy61q7",
+            "type": "column",
+            "content": {
+                "width": "1"
+            },
+            "parentId": "l3cnfilj4cdidwor",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "8m877h3t9hatls3k": {
+            "id": "8m877h3t9hatls3k",
+            "type": "column",
+            "content": {
+                "width": "1"
+            },
+            "parentId": "l3cnfilj4cdidwor",
+            "position": 1,
+            "handlers": {},
+            "visible": true
+        },
+        "6p9ns6vxvq23gjlt": {
+            "id": "6p9ns6vxvq23gjlt",
+            "type": "plotlygraph",
+            "content": {},
+            "parentId": "lt77f3weywhy61q7",
+            "position": 2,
+            "handlers": {},
+            "visible": true
+        },
+        "e5u8qdekt8f6vah8": {
+            "id": "e5u8qdekt8f6vah8",
+            "type": "dropdowninput",
+            "parentId": "lt77f3weywhy61q7",
+            "content": {
+                "label": "Input Label"
+            },
+            "handlers": {},
+            "position": 0,
+            "visible": true,
+            "binding": {
+                "eventType": "ss-option-change",
+                "stateRef": "lice_columns"
+            }
         }
     }
 }
