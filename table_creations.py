@@ -66,8 +66,8 @@ def create_localities_table(locality_id, keyspace="fish_data"):
 
 def check_table_exist(keyspace, table_to_check):
     session = _initiate_cassandra_driver()
-    session.set_keyspace('{keyspace}')
-    tables = session.execute("SELECT table_name FROM system_schema.tables WHERE keyspace_name = %s", [keyspace])
+    session.set_keyspace(f'{keyspace}')
+    tables = session.execute(f"SELECT table_name FROM system_schema.tables WHERE keyspace_name = '{keyspace}'")
     table_names = [row.table_name for row in tables]
     table_exists = False
     if table_to_check in table_names:

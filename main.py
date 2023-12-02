@@ -61,7 +61,10 @@ def handle_click(state, payload):
     print("handle_click end")
     
 def handle_select_lice(state, payload):
-    pass
+    print("handle_select_lice start")
+    state["chosen_column"] = payload
+    _update_plotly_columns(state)
+
 def handle_select(state, payload):
     print("handle_select start")    
     state["chosen_column"] = state["localities_JSON"][str(payload)]
@@ -118,6 +121,10 @@ def _get_JSON(state):
     print("_get_JSON start")
     my_json = dict(zip(list(range(len(state["l_columns"]))), state["l_columns"]))
     my_json = {str(key): value for key, value in my_json.items()}
+    lice_cols = ["avgadultfemalelice", "hasreportedlice", "avgmobilelice", "avgstationarylice"]
+    lice_json = dict(zip(list(range(len(lice_cols)))), lice_cols)
+    lice_json = {str(key): value for key, value in lice_json.items()}
+    state["lice_JSON"] = lice_json
     state["localities_JSON"] = my_json
     print("_get_JSON end")
 
