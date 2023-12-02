@@ -44,7 +44,7 @@ def api_weather_station_id(id, year):
     return df_total
 
 
-def get_week_summary(token, year, week):
+def _get_week_summary(token, year, week):
   url = f"{config['api_base_url']}/v1/geodata/fishhealth/locality/{year}/{week}"
   headers ={
     'authorization': 'Bearer ' + token['access_token'],
@@ -61,7 +61,7 @@ def localities_api(year):
     list_localitites = []
     df_total = pd.DataFrame()
     for week in range(1, 53):
-        locality_data = get_week_summary(token, year, week)
+        locality_data = _get_week_summary(token, year, week)
         for row in locality_data["localities"]:
             row["year"] = locality_data["year"]
             row["week"] = locality_data["week"]

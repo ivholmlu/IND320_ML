@@ -4,7 +4,7 @@ from pyspark.sql import SparkSession
 import warnings
 
 def _initiate_spark(port='9042'):
-    print("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS")
+    print("Spark initiating...")
     warnings.simplefilter(action='ignore', category=FutureWarning)
     from pyspark.sql import SparkSession
     os.environ["PYSPARK_PYTHON"] = r"/home/ivholmlu/miniconda3/envs/ind320/bin/python" 
@@ -19,11 +19,12 @@ def _initiate_spark(port='9042'):
     
     
     warnings.simplefilter(action='default', category=FutureWarning)
-    
+    print("Spark initiated")
     return spark
 
 def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
     #insert/append into existing table for single instance of locality data
+    print("Inserting into the localityid table")
     spark = _initiate_spark()
     spark_df = spark.createDataFrame(df)
     spark_df.write\
@@ -32,9 +33,11 @@ def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
         .options(table=f"locality_{locality_id}", keyspace=keyspace)\
         .save()
     spark.stop()
+    print("Insertion into localityid done")
 
 def insert_localities_year(df, keyspace="fish_data"):
     #insert/append into existing table for a yearly instance of data from all localitites.
+    print("Inserting into localities table")
     spark = _initiate_spark()
     spark_df = spark.createDataFrame(df)
     spark_df.write\
@@ -43,3 +46,4 @@ def insert_localities_year(df, keyspace="fish_data"):
         .options(table=f"locality_data", keyspace=keyspace)\
         .save()
     spark.stop()
+    print("Insertion into localities done")

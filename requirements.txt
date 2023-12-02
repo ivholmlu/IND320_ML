@@ -1,8 +1,11 @@
 cassandra-driver
 pandas
-warnings
 matplotlib
 seaborn
 ipywidgets
 requests
 statsmodels
+pyspark
+plotly
+streamsync
+numpy
