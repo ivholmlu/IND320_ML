@@ -29,7 +29,7 @@ def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
     spark_df.write\
         .format("org.apache.spark.sql.cassandra")\
         .mode('append')\
-        .options(table=f"locality_{locality_id}", keyspace=keyspace)\
+        .options(table=f"locality", keyspace=keyspace)\
         .save()
     spark.stop()
 

@@ -47,11 +47,11 @@
             "type": "sliderinput",
             "content": {
                 "label": "Slide to choose year",
-                "minValue": "2015",
+                "minValue": "2013",
                 "maxValue": "2022",
                 "stepSize": "1"
             },
-            "parentId": "k388ookn2bsh79l3",
+            "parentId": "jbufmos2v3c7vjao",
             "position": 0,
             "handlers": {
                 "ss-number-change": "handle_slider"
@@ -216,8 +216,10 @@
             "id": "745k10uhm4ciylc6",
             "type": "image",
             "content": {
-                "src": "https://media.tenor.com/yiqrYjlbMawAAAAi/colour-color-picker.gif",
-                "caption": "Loading data for year"
+                "src": "https://media.tenor.com/Jiiemy3hCrAAAAAd/fish.gif",
+                "caption": "Loading data for year",
+                "maxWidth": "300",
+                "maxHeight": "200"
             },
             "parentId": "z35vf0ueqm56w2g4",
             "position": 1,
@@ -289,17 +291,66 @@
         "e5u8qdekt8f6vah8": {
             "id": "e5u8qdekt8f6vah8",
             "type": "dropdowninput",
-            "parentId": "lt77f3weywhy61q7",
             "content": {
                 "label": "Input Label"
             },
-            "handlers": {},
+            "parentId": "lt77f3weywhy61q7",
             "position": 0,
-            "visible": true,
+            "handlers": {},
             "binding": {
                 "eventType": "ss-option-change",
                 "stateRef": "lice_columns"
-            }
+            },
+            "visible": true
+        },
+        "mruecywc3595fgvi": {
+            "id": "mruecywc3595fgvi",
+            "type": "columns",
+            "content": {},
+            "parentId": "k388ookn2bsh79l3",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "jbufmos2v3c7vjao": {
+            "id": "jbufmos2v3c7vjao",
+            "type": "column",
+            "content": {
+                "width": "1"
+            },
+            "parentId": "mruecywc3595fgvi",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "rkhq5d7smpgtxffa": {
+            "id": "rkhq5d7smpgtxffa",
+            "type": "column",
+            "content": {
+                "title": "Year not downloaded from before.",
+                "width": "0.6",
+                "separatorColor": "#ff0000"
+            },
+            "parentId": "mruecywc3595fgvi",
+            "position": 1,
+            "handlers": {},
+            "visible": "downloading_data"
+        },
+        "kq1saecddkqj2c6z": {
+            "id": "kq1saecddkqj2c6z",
+            "type": "button",
+            "content": {
+                "text": "Delete and reload keyspace",
+                "buttonColor": "#ff0000",
+                "buttonTextColor": "#ffffff",
+                "icon": "ri-close-circle-fill"
+            },
+            "parentId": "bebc5fe9-63a7-46a7-b0fa-62303555cfaf",
+            "position": 0,
+            "handlers": {
+                "ss-click": "reset_table"
+            },
+            "visible": true
         }
     }
 }

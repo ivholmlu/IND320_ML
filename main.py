@@ -12,7 +12,7 @@ def _update_plotly_pd(state):
     fig_pd = px.pie(df, names="haspd", title=f'Pie chart of hasPd for {name} \n{state["current_year"]}')
     state["plotly_pd"] = fig_pd
     print("_update_plotly_pd end")
-    
+
 def _update_plotly_columns(state):
     print("_update_plotly_columns start")
     col = state["chosen_column"]
@@ -48,6 +48,10 @@ def _update_plotly_localities(state):
     state["plotly_localities"] = fig_localities
     print("_update_plotly_localities end")
 
+def _update_plotly_locality_histogram(state):
+    #Need to create the df from the locality api first 
+    pass
+
 def handle_click(state, payload):
     print("handle_click start")
     localities = state["localities_df"]
@@ -55,13 +59,18 @@ def handle_click(state, payload):
     num = payload[0]["pointNumber"]
     locality_no = localities.loc[num, 'localityno']
     df = full[full['localityno'] == locality_no]
+    state["chosen_locality"] = locality_no
     state["click_df"] = df
+
     _update_plotly_pd(state) 
     _update_plotly_columns(state)
     print("handle_click end")
-    
+
 def handle_select_lice(state, payload):
-    pass
+    print("handle_select_lice start")
+    state["chosen_column"] = payload
+    _update_plotly_columns(state)
+
 def handle_select(state, payload):
     print("handle_select start")    
     state["chosen_column"] = state["localities_JSON"][str(payload)]
@@ -74,6 +83,7 @@ def handle_slider(state, payload):
     state["running_wheel"] = True
     state["current_year"] = int(payload)
     if not check_year("fish_data", "locality_data", state["current_year"]):
+        state["downloading_data"] = True
         full_df = localities_api(state["current_year"])
         insert_localities_year(full_df)
     else:
@@ -87,6 +97,7 @@ def handle_slider(state, payload):
     state["full_df"] = full_df
     state["localities_df"] = unique_df
     state["downloaded_locality_years"].append(state["current_year"])
+    state["downloading_data"] = False
     _update_plotly_localities(state)
     _update_plotly_pd(state)
     state["running_wheel"] = False
@@ -94,30 +105,67 @@ def handle_slider(state, payload):
 
 def _get_init_dataframes(state):
     print("_get_init_dataframes start")
+    
     if not check_table_exist("fish_data", "locality_data"):
         create_locality_table()
-    if not check_year("fish_data", "locality_data", 2022):
-        full_df = localities_api(2022)
+    if not check_year("fish_data", "locality_data", state["current_year"]):
+        full_df = localities_api(state["current_year"])
         insert_localities_year(full_df)
     else:
-        full_df = get_localities(2022) #Via cassandra
+        full_df = get_localities(state["current_year"]) #Via cassandra
         print("Initial dataframe gathered")
-    state["downloaded_locality_years"].append(2022)
+    state["downloaded_locality_years"].append(state["current_year"])
     unique_df = full_df.drop_duplicates(
         subset=['localityno', 'lat', 'lon', 'year', 'name'],
         inplace=False)
+    state["chosen_locality"] = 30977
+    if not check_locality_and_year(state["chosen_locality"], state["current_year"]):
+        create_localities_table(state["chosen_locality"])
+        df = locality_api(state["chosen_locality"], state["current_year"])
+        locality_df = get_week_summary_locality(token, state["current_year"], 1, 30977)
+        insert_into_locality(30977, locality_df)
     
-    locality_no = 30977
-    df = full_df[full_df['localityno'] == locality_no]
+    df = full_df[full_df['localityno'] == state["chosen_locality"]]
+    
     state["click_df"] = df
     state["full_df"] = full_df
     state["localities_df"] = unique_df
     print("_get_init_dataframes end")
 
+def reset_fish_data(state):
+
+    state["running_wheel"] = True
+    session = _initiate_cassandra_driver()
+    session.execute("DROP KEYSPACE IF EXISTS fish_data")
+    create_locality_table()
+    full_df = localities_api(2022)
+    insert_localities_year(full_df)
+    state["downloaded_locality_years"] = []
+    state["downloaded_locality_years"].append(2022)
+    unique_df = full_df.drop_duplicates(
+        subset=['localityno', 'lat', 'lon', 'year', 'name'],
+        inplace=False)
+    locality_no = 30977
+    df = full_df[full_df['localityno'] == locality_no]
+    state["click_df"] = df
+    state["full_df"] = full_df
+    state["localities_df"] = unique_df
+    _update_plotly_localities(state)
+    _update_plotly_pd(state)
+    state["chosen_column"] = "avgadultfemalelice"
+    _update_plotly_columns(state)
+    state["running_wheel"] = False
+
+
+
 def _get_JSON(state):
     print("_get_JSON start")
     my_json = dict(zip(list(range(len(state["l_columns"]))), state["l_columns"]))
     my_json = {str(key): value for key, value in my_json.items()}
+    lice_cols = ["avgadultfemalelice", "hasreportedlice", "avgmobilelice", "avgstationarylice"]
+    lice_json = dict(zip(list(range(len(lice_cols))), lice_cols))
+    lice_json = {str(key): value for key, value in lice_json.items()}
+    state["lice_JSON"] = lice_json
     state["localities_JSON"] = my_json
     print("_get_JSON end")
 

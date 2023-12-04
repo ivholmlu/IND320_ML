@@ -45,19 +45,33 @@ def api_weather_station_id(id, year):
 
 
 def get_week_summary(token, year, week):
-  url = f"{config['api_base_url']}/v1/geodata/fishhealth/locality/{year}/{week}"
-  headers ={
+    url = f"{config['api_base_url']}/v1/geodata/fishhealth/locality/{year}/{week}"
+    headers ={
     'authorization': 'Bearer ' + token['access_token'],
     'content-type': 'application/json',
-  }
+    }
 
-  response = requests.get(url, headers=headers)
-  response.raise_for_status()
-  return response.json()
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
 
 
 def localities_api(year):
     token = get_token()
+    list_localitites = []   
+    df_total = pd.DataFrame()
+    for week in range(1, 53):
+        locality_data = get_week_summary(token, year, week)
+        for row in locality_data["localities"]:
+            row["year"] = locality_data["year"]
+            row["week"] = locality_data["week"]
+            list_localitites.append(row)
+    df_localities_year = pd.DataFrame(list_localitites)
+    df_localities_year.columns = df_localities_year.columns.str.lower()
+    return df_localities_year
+
+
+def localities_api(year):
     list_localitites = []
     df_total = pd.DataFrame()
     for week in range(1, 53):
@@ -69,3 +83,14 @@ def localities_api(year):
     df_localities_year = pd.DataFrame(list_localitites)
     df_localities_year.columns = df_localities_year.columns.str.lower()
     return df_localities_year
+
+def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
+    #insert/append into existing table for single instance of locality data
+    spark = _initiate_spark()
+    spark_df = spark.createDataFrame(df)
+    spark_df.write\
+        .format("org.apache.spark.sql.cassandra")\
+        .mode('append')\
+        .options(table=f"locality_{locality_id}", keyspace=keyspace)\
+        .save()
+    spark.stop()
