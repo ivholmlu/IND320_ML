@@ -83,14 +83,3 @@ def localities_api(year):
     df_localities_year = pd.DataFrame(list_localitites)
     df_localities_year.columns = df_localities_year.columns.str.lower()
     return df_localities_year
-
-def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
-    #insert/append into existing table for single instance of locality data
-    spark = _initiate_spark()
-    spark_df = spark.createDataFrame(df)
-    spark_df.write\
-        .format("org.apache.spark.sql.cassandra")\
-        .mode('append')\
-        .options(table=f"locality_{locality_id}", keyspace=keyspace)\
-        .save()
-    spark.stop()

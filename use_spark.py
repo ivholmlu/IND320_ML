@@ -22,7 +22,7 @@ def _initiate_spark(port='9042'):
     
     return spark
 
-def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
+def insert_into_locality(df, keyspace="fish_data"):
     #insert/append into existing table for single instance of locality data
     spark = _initiate_spark()
     spark_df = spark.createDataFrame(df)

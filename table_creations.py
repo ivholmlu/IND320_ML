@@ -4,17 +4,19 @@ import pandas as pd
 from authentication import get_token
 from credentials import config, config_frost
 import time
+import requests
 
 def timer(func):
-    def wrapper():
-        print(f"{func.__nmae__"} start")
+    def wrapper(*args, **kwargs):
+        print(f"{func.__name__} start")
         t1 = time.time()
-        func()
+        result = func(*args, **kwargs)
         t2 = time.time()
-        print(f"{func.__nmae__"} end, time: {t2-t1}")
+        print(f"{func.__name__:-^30} spent {t2-t1:.2f}s")
+        return result
     return wrapper
 
-@timer
+
 def _initiate_cassandra_driver(p=9042):
     print("CASSANDRA DRIVER INITIATED")
     cluster = Cluster(['localhost'], port=p)
@@ -53,16 +55,17 @@ def create_locality_table(session=1):
     infilteredselection BOOLEAN,
     hassalmonoids BOOLEAN,
     isslaughterholdingcage BOOLEAN,
-    PRIMARY KEY (year, week, localityno)
-);"""
+    PRIMARY KEY (year, week, localityno));"""
 
     session.execute(table_creation_query)
 
-def create_localities_table(locality_id, keyspace="fish_data", reset=False):
+def create_localities_table(keyspace="fish_data", reset=False):
+    
     session = _initiate_cassandra_driver()
+    session.set_keyspace(keyspace)
     if reset:
         session.execute(f"DROP TABLE IF EXISTS locality")
-    session.set_keyspace(keyspace)
+    
     
     table_creation_query = f"""CREATE TABLE locality (
     year INT,
@@ -76,8 +79,7 @@ def create_localities_table(locality_id, keyspace="fish_data", reset=False):
     localityname TEXT,
     lat FLOAT,
     lon FLOAT,
-    PRIMARY KEY (year, week, localityno)
-);"""
+    PRIMARY KEY (year, localityno, week));"""
     session.execute(table_creation_query)
 
 def check_table_exist(keyspace, table_to_check):
@@ -137,6 +139,25 @@ def get_localities(year):
     df = pd.DataFrame(list(rows))
     return df
 
+@timer
+def get_locality(locality_id, year):
+    """Return all localities for a given year from cassandra db
+
+    Args:
+        year (int): year that data is requested for
+
+    Returns:
+        _type_: dataframe with all data for localities for a given year
+    """
+    session = _initiate_cassandra_driver()
+    session.set_keyspace('fish_data')
+    query = f"SELECT * FROM locality WHERE year = {year} AND localityno = {locality_id}"
+    rows = session.execute(query)
+    print(rows)
+    #Return rows as df
+    df = pd.DataFrame(list(rows))
+    return df
+
 def get_week_summary_locality(token, year, week, localityID):
     url = f"{config['api_base_url']}/v1/geodata/fishhealth/locality/{localityID}/{year}/{week}"
     headers ={
@@ -159,7 +180,7 @@ def get_lat_lon(locality_id):
         lon = row.lon
     return lat, lon
 
-@
+
 def localities_api(year):
     token = get_token()
     list_localitites = []
