@@ -23,7 +23,7 @@
                 "key": "First page"
             },
             "parentId": "root",
-            "position": 1,
+            "position": 0,
             "handlers": {
                 "ss-keydown": "handle_select"
             },
@@ -47,7 +47,7 @@
             "type": "sliderinput",
             "content": {
                 "label": "Slide to choose year",
-                "minValue": "2013",
+                "minValue": "2012",
                 "maxValue": "2022",
                 "stepSize": "1"
             },
@@ -195,7 +195,7 @@
             "type": "page",
             "content": {},
             "parentId": "root",
-            "position": 0,
+            "position": 2,
             "handlers": {},
             "visible": true
         },
@@ -217,7 +217,7 @@
             "type": "image",
             "content": {
                 "src": "https://media.tenor.com/Jiiemy3hCrAAAAAd/fish.gif",
-                "caption": "Loading data for year",
+                "caption": "Loading data for year or locality",
                 "maxWidth": "300",
                 "maxHeight": "200"
             },
@@ -230,10 +230,10 @@
             "id": "64bapfddvazwn3bo",
             "type": "plotlygraph",
             "content": {
-                "spec": "@{plotly_line}"
+                "spec": "@{plotly_locality}"
             },
             "parentId": "lt77f3weywhy61q7",
-            "position": 1,
+            "position": 2,
             "handlers": {},
             "visible": true
         },
@@ -282,9 +282,11 @@
         "6p9ns6vxvq23gjlt": {
             "id": "6p9ns6vxvq23gjlt",
             "type": "plotlygraph",
-            "content": {},
+            "content": {
+                "spec": "@{plotly_weather}"
+            },
             "parentId": "lt77f3weywhy61q7",
-            "position": 2,
+            "position": 4,
             "handlers": {},
             "visible": true
         },
@@ -292,11 +294,14 @@
             "id": "e5u8qdekt8f6vah8",
             "type": "dropdowninput",
             "content": {
-                "label": "Input Label"
+                "label": "Input Label",
+                "options": "@{lice_JSON}"
             },
             "parentId": "lt77f3weywhy61q7",
             "position": 0,
-            "handlers": {},
+            "handlers": {
+                "ss-option-change": "handle_select_lice"
+            },
             "binding": {
                 "eventType": "ss-option-change",
                 "stateRef": "lice_columns"
@@ -350,6 +355,80 @@
             "handlers": {
                 "ss-click": "reset_table"
             },
+            "visible": true
+        },
+        "588u1rg7tw0yu392": {
+            "id": "588u1rg7tw0yu392",
+            "type": "image",
+            "content": {
+                "src": "https://media0.giphy.com/media/eImrJKnOmuBDmqXNUj/giphy.gif?cid=ecf05e47uz04xgvdxqhb46pzg410dfoei9a10c7m1f37hto2&ep=v1_gifs_search&rid=giphy.gif&ct=g",
+                "caption": "Image Caption"
+            },
+            "parentId": "lt77f3weywhy61q7",
+            "position": 1,
+            "handlers": {},
+            "visible": "show_alarm"
+        },
+        "l3dajybk9afqg4aj": {
+            "id": "l3dajybk9afqg4aj",
+            "type": "dropdowninput",
+            "content": {
+                "label": "Select weather column",
+                "options": "@{weather_JSON}"
+            },
+            "parentId": "lt77f3weywhy61q7",
+            "position": 3,
+            "handlers": {
+                "ss-option-change": "handle_weather_select"
+            },
+            "binding": {
+                "eventType": "ss-option-change",
+                "stateRef": "chosen_weather"
+            },
+            "visible": true
+        },
+        "fg1e37vffssl12h7": {
+            "id": "fg1e37vffssl12h7",
+            "type": "page",
+            "content": {},
+            "parentId": "root",
+            "position": 1,
+            "handlers": {},
+            "visible": true
+        },
+        "syqp20kq3h0xyrq7": {
+            "id": "syqp20kq3h0xyrq7",
+            "type": "textareainput",
+            "content": {
+                "label": "Backend info",
+                "placeholder": "All functions dependent on cassandra and spark are kept at a lower level due to streamsync being dependent on deepcopy, which is not possible with spark nor cassandra.\n\nSubpart of the  state is updated within each function, with trying to minimize the \n",
+                "rows": "5"
+            },
+            "parentId": "fg1e37vffssl12h7",
+            "position": 0,
+            "handlers": {},
+            "visible": true
+        },
+        "5y7ih8huo745e0wd": {
+            "id": "5y7ih8huo745e0wd",
+            "type": "dataframe",
+            "content": {
+                "dataframe": "@{merged_df}"
+            },
+            "parentId": "riysvvo8ihf2xm57",
+            "position": 3,
+            "handlers": {},
+            "visible": true
+        },
+        "442bib8035nrhyiz": {
+            "id": "442bib8035nrhyiz",
+            "type": "dataframe",
+            "content": {
+                "dataframe": "@{weather_df}"
+            },
+            "parentId": "riysvvo8ihf2xm57",
+            "position": 2,
+            "handlers": {},
             "visible": true
         }
     }

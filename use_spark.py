@@ -22,9 +22,11 @@ def _initiate_spark(port='9042'):
     
     return spark
 
-def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
+def insert_into_locality(df, keyspace="fish_data"):
     #insert/append into existing table for single instance of locality data
     spark = _initiate_spark()
+    #Make all columns in df lowercase
+    df.columns = [x.lower() for x in df.columns]
     spark_df = spark.createDataFrame(df)
     spark_df.write\
         .format("org.apache.spark.sql.cassandra")\
@@ -36,6 +38,7 @@ def insert_into_locality(spark, locality_id, df, keyspace="fish_data"):
 def insert_localities_year(df, keyspace="fish_data"):
     #insert/append into existing table for a yearly instance of data from all localitites.
     spark = _initiate_spark()
+    df.columns = [x.lower() for x in df.columns]
     spark_df = spark.createDataFrame(df)
     spark_df.write\
         .format("org.apache.spark.sql.cassandra")\
